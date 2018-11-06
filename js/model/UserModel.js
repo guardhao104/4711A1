@@ -80,13 +80,6 @@ var quiz = new Array();
 	},
 		
 	chkData: function() {
-		//console.log('quiz ' + quiz);
-		console.log(this.questions);
-		// console.log('diffecult ' + this.diffecult);
-		// console.log('score ' + this.score);
-		// console.log('quizNum ' + this.quizNum);
-		// console.log('answers ' + this.answers);
-
 		if (this.number == 0) {
 			return 0;
 		}

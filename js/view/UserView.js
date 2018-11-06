@@ -6,6 +6,8 @@ var UserView = function (model) {
 	this.diffecult = 0;
 	this.user;
 	this.database = firebase.database();
+	this.email = [];
+	this.score = [];
 
     this.init();
 };
@@ -171,8 +173,16 @@ UserView.prototype = {
 			<div id='alert-message' class='container alert alert-success' role='alert'>\
 			  <h4 class='alert-heading'>Successfully submitted!</h4>\
 			  <p>Your final score is "+this.model.getScore()+" / "+this.model.getQuizNum()+"!</p>\
+			  <button type='button' class='btn btn-primary btn-lg' id='btn-rank'>Ranking</button>\
 			</div>\
 		");
+		$("#btn-rank").click(function(){
+			if (this.email.length >= 3) {
+				this.showRank();
+			} else {
+				this.showRankAlert();
+			}
+		}.bind(this));
 
 		window.scrollTo(0,0);
 	},
@@ -194,11 +204,83 @@ UserView.prototype = {
 		});
 	},
 
-	readRankData: function(userID) {
-		return this.database.ref('/users/' + userID).once('value').then(function(snapshot) {
-			var email = (snapshot.val() && snapshot.val().email) || 'UNKNOWN';
-			var score = (snapshot.val() && snapshot.val().score) || 'HiGH MARK';
-		})
+	readRankData: function() {
+		this.database.ref('/users/').orderByChild('score').once('value').then(function(snapshot) {
+			snapshot.forEach(e => {
+				this.email.push(e.val().email);
+				this.score.push(e.val().score);
+				this.reorderRank();
+			});
+		}.bind(this));
+	},
+
+	reorderRank: function() {
+		var length = this.email.length;
+		for (let i=0; i<length/2; ++i) {
+			let buffer1 = this.email[i];
+			this.email[i] = this.email[length - i - 1];
+			this.email[length - i - 1] = buffer1;
+			let buffer2 = this.score[i];
+			this.score[i] = this.score[length - i - 1];
+			this.score[length - i - 1] = buffer2;
+		}
+	},
+
+	showRank: function() {
+		$("#alert-message").remove();
+		$("#alert-message-div").prepend(" \
+			<div id='alert-message' class='container alert alert-danger' role='alert'>\
+			  <h4 class='alert-heading'>TOP RANKING</h4>\
+			  <table class='table'>\
+				<thead>\
+					<tr>\
+					<th scope='col'>#</th>\
+					<th scope='col'>User</th>\
+					<th scope='col'>Score</th>\
+					</tr>\
+				</thead>\
+				<tbody>\
+					<tr>\
+					<th scope='row'>1</th>\
+					<td>"+ this.email[0] +"</td>\
+					<td>"+ this.score[0] +"</td>\
+					</tr>\
+					<tr>\
+					<th scope='row'>2</th>\
+					<td>"+ this.email[1] + "</td>\
+					<td>"+ this.score[1] +"</td>\
+					</tr>\
+					<tr>\
+					<th scope='row'>3</th>\
+					<td>"+ this.email[2] +"</td>\
+					<td>"+ this.score[2] +"</td>\
+					</tr>\
+				</tbody>\
+				</table>\
+				<button type='button' class='btn btn-danger btn-lg' id='btn-leave'>Log Off</button>\
+			</div>\
+		");
+		$("#btn-leave").click(function(){
+			window.location.href="login.html";
+			firebase.auth().signOut();
+		}.bind(this));
+
+	},
+
+	showRankAlert: function() {
+		$("#alert-message").remove();
+		$("#alert-message-div").prepend(" \
+			<div id='alert-message' class='container alert alert-danger' role='alert'>\
+			  <h4 class='alert-heading'>Failed to read ranking data!</h4>\
+			  <p>There seems no enough data in ranking. Please wait a while.</p>\
+			  <button type='button' class='btn btn-danger btn-lg' id='btn-leave'>Log Off</button>\
+			</div>\
+		");
+		$("#btn-leave").click(function(){
+			window.location.href="login.html";
+			firebase.auth().signOut();
+		}.bind(this));
+
 	},
 
     /* -------------------- Handlers From Event Dispatcher ----------------- */
@@ -229,6 +311,7 @@ UserView.prototype = {
 		this.markQuestions(this.model.getDiffecult());
 		this.showResult();
 		this.writeRankData(this.user.uid, this.user.email, this.model.getScore());
+		this.readRankData();
 	},
 
     /* -------------------- End Handlers From Event Dispatcher ----------------- */
