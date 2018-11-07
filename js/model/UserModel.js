@@ -25,12 +25,7 @@ var quiz = new Array();
 	 readQuiz: function() {
 		return this.database.ref('/quiz/').once('value').then(function(snapshot) {
 			var quiz = (snapshot.val() && snapshot.val().quiz) || 'UNKNOWN';
-			//this.questions = quiz;
 			this.initQuiz(quiz);
-			// this.number = this.questions.length;
-			// for (let i=0; i<this.number; i++) {
-			// 	this.answers.push(this.questions[i].correct);
-			// }
 		}.bind(this));
 	 },
 

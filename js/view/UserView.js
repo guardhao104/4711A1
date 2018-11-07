@@ -32,7 +32,7 @@ UserView.prototype = {
 			  var providerData = user.providerData;
 			  $("#user-welcome").html("Welcome! " + email);
 			} else {
-				window.location.href="login.html";
+				window.location.href="index.html";
 			}
 		}.bind(this));
     },
@@ -266,7 +266,7 @@ UserView.prototype = {
 			</div>\
 		");
 		$("#btn-leave").click(function(){
-			window.location.href="login.html";
+			window.location.href="index.html";
 			firebase.auth().signOut();
 		}.bind(this));
 
@@ -282,7 +282,7 @@ UserView.prototype = {
 			</div>\
 		");
 		$("#btn-leave").click(function(){
-			window.location.href="login.html";
+			window.location.href="index.html";
 			firebase.auth().signOut();
 		}.bind(this));
 
