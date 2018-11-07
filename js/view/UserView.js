@@ -198,7 +198,7 @@ UserView.prototype = {
 	},
 
 	writeRankData: function(userID, email, score) {
-		this.database.ref('users/' + userID).set({
+		this.database.ref('users/' + userID + '--' + this.model.getDiffecult() + '--').set({
 			email: email,
 			score: score
 		});
@@ -207,11 +207,16 @@ UserView.prototype = {
 	readRankData: function() {
 		this.database.ref('/users/').orderByChild('score').once('value').then(function(snapshot) {
 			snapshot.forEach(e => {
-				this.email.push(e.val().email);
-				this.score.push(e.val().score);
-				this.reorderRank();
+				console.log(e);
+				console.log(e.val());
+				console.log(e.key);
+				if (e.key.indexOf('--' + this.model.getDiffecult() + '--') != -1) {
+					this.email.push(e.val().email);
+					this.score.push(e.val().score);
+				}
 			});
 		}.bind(this));
+		this.reorderRank();
 	},
 
 	reorderRank: function() {

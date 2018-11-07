@@ -109,7 +109,7 @@ var quiz = new Array();
 	 },
 
 	writeRankData: function(userID, email, score) {
-		this.database.ref('users/' + userID).set({
+		this.database.ref('users/' + userID + '-' + this.diffecult + '-').set({
 			email: email,
 			score: score
 		});
@@ -121,34 +121,6 @@ var quiz = new Array();
 			var score = (snapshot.val() && snapshot.val().score) || 'HiGH MARK';
 		})
 	},
-
-	  	// var userId = firebase.auth().currentUser.uid;
-		// return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-		//   var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-		//   // ...
-		// });
-
-	  writeNewPost: function(uid, username, picture, title, body) {
-		// A post entry.
-		var postData = {
-		  author: username,
-		  uid: uid,
-		  body: body,
-		  title: title,
-		  starCount: 0,
-		  authorPic: picture
-		};
-		
-		// Get a key for a new Post.
-		var newPostKey = firebase.database().ref().child('posts').push().key;
-	  
-		// Write the new post's data simultaneously in the posts list and the user's post list.
-		var updates = {};
-		updates['/posts/' + newPostKey] = postData;
-		updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-	  
-		return firebase.database().ref().update(updates);
-	  },
 	 
 	 getQuestions: function () {
 		 return this.questions;
