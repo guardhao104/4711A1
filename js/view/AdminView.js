@@ -12,7 +12,14 @@ AdminView.prototype = {
     init: function () {
         this.createChildren()
             .setupHandlers()
-            .enable();
+						.enable();
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+
+					} else {
+						window.location.href="login.html";
+					}
+				}.bind(this));
     },
 
     createChildren: function () {
