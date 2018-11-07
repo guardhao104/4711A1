@@ -178,6 +178,7 @@ UserView.prototype = {
 		");
 		$("#btn-rank").click(function(){
 			if (this.email.length >= 3) {
+				this.reorderRank();
 				this.showRank();
 			} else {
 				this.showRankAlert();
@@ -216,7 +217,6 @@ UserView.prototype = {
 				}
 			});
 		}.bind(this));
-		this.reorderRank();
 	},
 
 	reorderRank: function() {
